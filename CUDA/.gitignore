@@ -1,0 +1,5 @@
+.vs/*
+Data/*
+!Data/matrix_5.txt
+ParallelProject/*
+x64/*

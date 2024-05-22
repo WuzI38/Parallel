@@ -1,0 +1,6 @@
+.vscode/*
+
+data/*
+!data/matrix_5.txt
+
+*.exe
