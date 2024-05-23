@@ -24,6 +24,8 @@
 
 #define NUM_TRIALS 10
 #define FILENAMES {"matrix_1024.txt", "matrix_2048.txt", "matrix_4096.txt"}
+#define FILESIZES {1024, 2048, 4096}
+#define MATRIX_MAIN_FILE "matrix_5.txt"
 
 #define DIRECTORY "Data\\"
 
@@ -52,15 +54,16 @@ void measureMatrixGeneration(int matrixSize) {
 
 void measureAlgorithmExecution(const std::string& filename, int matrixSize) {
     double totalDuration = 0.0;
+
+    double* matrix = new double[matrixSize * matrixSize];
+    loadMatrixFromFile(matrix, matrixSize, DIRECTORY, filename);
+
     for (int i = 0; i < NUM_TRIALS; ++i) {
         // Load from file
-        double* matrix = new double[matrixSize * matrixSize];
-        loadMatrixFromFile(matrix, matrixSize, DIRECTORY, filename);
 
-        // Copy the matrix to device memory
         double* d_matrix;
-        cudaMalloc(&d_matrix, matrixSize * matrixSize * sizeof(double));
-        cudaMemcpy(d_matrix, matrix, matrixSize * matrixSize * sizeof(double), cudaMemcpyHostToDevice);
+        double* d_vector; // cuda vector
+        double* d_newVector;
 
         // Init vector pi(t)
         double* h_vector = new double[matrixSize]; // local vector
@@ -68,16 +71,19 @@ void measureAlgorithmExecution(const std::string& filename, int matrixSize) {
             h_vector[i] = 1.0 / matrixSize;
         }
 
+        auto start = std::chrono::high_resolution_clock::now();
+        // Copy the matrix to device memory
+        
+        cudaMalloc(&d_matrix, matrixSize * matrixSize * sizeof(double));
+        cudaMemcpy(d_matrix, matrix, matrixSize * matrixSize * sizeof(double), cudaMemcpyHostToDevice);
+
         // Allocate memory on the device for the vectors
-        double* d_vector; // cuda vector
-        double* d_newVector;
+        
         cudaMalloc(&d_vector, matrixSize * sizeof(double));
         cudaMalloc(&d_newVector, matrixSize * sizeof(double));
 
         // Copy the initial vector to the device
         cudaMemcpy(d_vector, h_vector, matrixSize * sizeof(double), cudaMemcpyHostToDevice);
-
-        auto start = std::chrono::high_resolution_clock::now();
 
         // Algorithm's single iteration
         for (int i = 0; i < MAX_ITERATIONS; ++i) {
@@ -94,12 +100,13 @@ void measureAlgorithmExecution(const std::string& filename, int matrixSize) {
         std::chrono::duration<double> elapsed = end - start;
         totalDuration += elapsed.count();
 
-        delete[] matrix;
         delete[] h_vector;
         cudaFree(d_vector);
         cudaFree(d_newVector);
         cudaFree(d_matrix);
     }
+
+    delete[] matrix;
 
     double averageDuration = totalDuration / NUM_TRIALS;
     std::cout << "Average algorithm execution time for " << filename << ": " << averageDuration << "s\n";
@@ -116,11 +123,12 @@ int main()
 
     // Copy the matrix back to host memory
     double* matrix = new double[MATRIX_SIZE * MATRIX_SIZE];
-    cudaMemcpy(matrix, d_matrix, MATRIX_SIZE * MATRIX_SIZE * sizeof(double), cudaMemcpyDeviceToHost);
+    //cudaMemcpy(matrix, d_matrix, MATRIX_SIZE * MATRIX_SIZE * sizeof(double), cudaMemcpyDeviceToHost);
 
 
     // Load from file
-    loadMatrixFromFile(matrix, MATRIX_SIZE, DIRECTORY, "matrix_5.txt");
+    loadMatrixFromFile(matrix, MATRIX_SIZE, DIRECTORY, MATRIX_MAIN_FILE);
+    //generateMatrix(matrix, MATRIX_SIZE, DAMPING_FACTOR);
 
     // Copy the matrix to device memory
     cudaMemcpy(d_matrix, matrix, MATRIX_SIZE * MATRIX_SIZE * sizeof(double), cudaMemcpyHostToDevice);
@@ -137,6 +145,8 @@ int main()
     cudaMalloc(&d_vector, MATRIX_SIZE * sizeof(double));
     cudaMalloc(&d_newVector, MATRIX_SIZE * sizeof(double));
 
+    // Measure time
+    auto start = std::chrono::high_resolution_clock::now();
 
     // Copy the initial vector to the device
     cudaMemcpy(d_vector, h_vector, MATRIX_SIZE * sizeof(double), cudaMemcpyHostToDevice);
@@ -154,6 +164,10 @@ int main()
 
     // Copy the final vector back to host memory
     cudaMemcpy(h_vector, d_vector, MATRIX_SIZE * sizeof(double), cudaMemcpyDeviceToHost);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Algorithm execution time: " << elapsed.count() << "s\n";
 
 
     printMatrix(matrix, MATRIX_SIZE);
@@ -181,8 +195,10 @@ int main()
 
     // Measure algorithm execution time
     std::vector<std::string> filenames = FILENAMES;
-    for (const auto& filename : filenames) {
-        measureAlgorithmExecution(filename, MATRIX_SIZE);
+    std::vector<int> filesizes = FILESIZES;
+
+    for (std::size_t i = 0; i < filenames.size(); ++i) {
+        measureAlgorithmExecution(filenames[i], filesizes[i]);
     }
 
     return 0;
