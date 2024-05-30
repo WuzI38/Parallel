@@ -4,10 +4,12 @@
     <CudaCompile Include="kernel.cu" />
     <CudaCompile Include="Source\algorithm_cuda.cu" />
     <CudaCompile Include="Source\methods_cuda.cu" />
+    <CudaCompile Include="Source\time_test.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\algorithm_cuda.cuh" />
     <ClInclude Include="Headers\methods_cuda.cuh" />
+    <ClInclude Include="Headers\time_test.cuh" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Data\matrix_5.txt" />

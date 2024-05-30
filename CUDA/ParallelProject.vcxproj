@@ -79,8 +79,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="Source\time_test.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\time_test.cuh" />
     <CudaCompile Include="Source\algorithm_cuda.cu">
       <FileType>Document</FileType>
     </CudaCompile>
