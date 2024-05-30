@@ -5,9 +5,9 @@
 #include <ctime>
 
 #include "generate_matrix.h"
-#include "generate_matrix_mpi.h"
+#include "generate_matrix_mp.h"
 #include "page_algorithm.h"
-#include "page_algorithm_mpi.h"
+#include "page_algorithm_mp.h"
 
 void printMatrix(double** matrix, int n);
 void printVector(double* vector, int n);

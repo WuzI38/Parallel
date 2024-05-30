@@ -11,8 +11,7 @@ void multiplyVectorByMatrix(double* vector, double** matrix, double* result, int
 }
 
 // Chceck if current and previous vectors are the same
-bool compareVectors(double* vector1, double* vector2, int n) {
-    double epsilon = 1e-6;
+bool compareVectors(double* vector1, double* vector2, int n, double epsilon = 1e-6) {
     for (int i = 0; i < n; ++i) {
         if (std::abs(vector1[i] - vector2[i]) > epsilon) {
             return false;

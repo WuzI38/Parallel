@@ -12,8 +12,7 @@ void multiplyVectorByMatrixMPI(double* vector, double** matrix, double* result, 
 }
 
 // Chceck if current and previous vectors are the same
-bool compareVectorsMPI2(double* vector1, double* vector2, int n) {
-    double epsilon = 1e-6;
+bool compareVectorsMP2(double* vector1, double* vector2, int n, double epsilon = 1e-6) {
     bool areEqual = true;
     #pragma omp parallel for shared(areEqual)
     for (int i = 0; i < n; ++i) {
@@ -29,8 +28,7 @@ bool compareVectorsMPI2(double* vector1, double* vector2, int n) {
 }
 
 // Alternative version using reduction, might be a bit faster
-bool compareVectorsMPI(double* vector1, double* vector2, int n) {
-    double epsilon = 1e-6;
+bool compareVectorsMP(double* vector1, double* vector2, int n, double epsilon = 1e-6) {
     bool areEqual = true;
     #pragma omp parallel for reduction(&:areEqual)
     for (int i = 0; i < n; ++i) {

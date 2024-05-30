@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-void generateMatrixMPI(double** matrix, int n, double B) {
+void generateMatrixMP(double** matrix, int n, double B) {
     std::srand(std::time(0));
 
     // Add damping factor 

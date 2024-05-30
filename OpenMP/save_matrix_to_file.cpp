@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
     // If 2 arguments were given save the matrix to a taxt file with given name
     if(argc == 2) {
-        generateMatrixMPI(matrix, MATRIX_SIZE, DAMPING_FACTOR);
+        generateMatrixMP(matrix, MATRIX_SIZE, DAMPING_FACTOR);
         saveMatrixToFile(matrix, MATRIX_SIZE, DIRECTORY, argv[1], PRECISION);
         return 0;
     }

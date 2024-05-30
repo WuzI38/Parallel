@@ -5,9 +5,9 @@
 #include <ctime>
 
 #include "..\\headers\\generate_matrix.h"
-#include "..\\headers\\generate_matrix_mpi.h"
+#include "..\\headers\\generate_matrix_mp.h"
 #include "..\\headers\\page_algorithm.h"
-#include "..\\headers\\page_algorithm_mpi.h"
+#include "..\\headers\\page_algorithm_mp.h"
 
 // This method is not a part of an algoritm, thus it is not implemented as a parallel
 void printMatrix(double** matrix, int n) {
@@ -74,7 +74,7 @@ void generateAndMeasure(double** matrix, int size, int iterations, double df) {
         timeSum += elapsed.count();
 
         start = std::chrono::high_resolution_clock::now();
-        generateMatrixMPI(matrix, size, df);
+        generateMatrixMP(matrix, size, df);
         end = std::chrono::high_resolution_clock::now();
         elapsed = end - start;
         timeSumMPI += elapsed.count();
@@ -121,8 +121,8 @@ void iterateAndMeasure(double* vector, double** matrix, double* newVector, int s
     for(int x = 0; x < iterations; x++) {
         start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < maxIterations; ++i) {
-            multiplyVectorByMatrixMPI(vector, matrix, newVector, size);
-            if (compareVectorsMPI(vector, newVector, size)) {
+            multiplyVectorByMatrixMP(vector, matrix, newVector, size);
+            if (compareVectorsMP(vector, newVector, size)) {
                 break;
             }
             std::copy(newVector, newVector+size, vector);

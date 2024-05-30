@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
 
     // Algorithm's single iteration
     for (int i = 0; i < MAX_ITERATIONS; ++i) {
-        multiplyVectorByMatrixMPI(vector, matrix, newVector, MATRIX_SIZE); // matrix and vector multiplication 
-        if (compareVectorsMPI(vector, newVector, MATRIX_SIZE)) {
+        multiplyVectorByMatrixMP(vector, matrix, newVector, MATRIX_SIZE); // matrix and vector multiplication 
+        if (compareVectorsMP(vector, newVector, MATRIX_SIZE)) {
             break;
         }
         // Replace old vector with new vector

@@ -5,4 +5,4 @@
 #include <vector>
 #include <algorithm>
 
-void generateMatrixMPI(double** matrix, int n, double B);
+void generateMatrixMP(double** matrix, int n, double B);
